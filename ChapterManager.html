@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <title>Document</title>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-light bg-info">
+            <a class="navbar-brand">Navbar</a>
+            <form class="form-inline">
+                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-dark my-2 my-sm-0" type="submit">Search</button>
+            </form>
+        </nav>
+    </header>
+    <main>
+        <div class="container mt-5 col-6">
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" placeholder="Chapter Name" aria-label="Chapter Name">
+                <button id="add_btn" class="btn btn-outline-success" type="button">Add</button>
+            </div>
+            <ul id="parentList" class="list-group">
+                <li class="list-group-item emptyMsg">Nothing is here. Please add a Chapter name!!</li>
+            </ul>
+        </div>
+    </main>
+    <script>
+        let addBtn = document.getElementById('add_btn');
+        let parentList = document.getElementById('parentList');
+
+        addBtn.addEventListener('click', addChapter);
+
+        function addChapter() {
+            if (parentList.children[0].classList.contains("emptyMsg")) {
+                parentList.children[0].remove();
+            }
+
+            let currentInput = document.querySelector(".input-group input");
+            let currentChapterName = currentInput.value;
+
+            if (currentChapterName.trim() === "") {
+                alert("Chapter Name cannot be empty!");
+                return;
+            }
+
+            let newLi = document.createElement('li');
+            newLi.className = "list-group-item d-flex justify-content-between";
+            newLi.innerHTML = `
+                <h3 class="flex-grow-1">${currentChapterName}</h3>
+                <button class="btn btn-warning mx-5" onclick="editChapter(this)">Edit</button>
+                <button class="btn btn-danger mx-5" onclick="removeChapter(this)">Remove</button>
+            `;
+
+            parentList.appendChild(newLi);
+            currentInput.value = ""; // Clear input
+        }
+
+        function removeChapter(currElement) {
+            currElement.parentElement.remove();
+
+            if (parentList.children.length === 0) {
+                let newEmptyMsg = document.createElement("li");
+                newEmptyMsg.className = "list-group-item emptyMsg";
+                newEmptyMsg.textContent = "Nothing is here. Please add a Chapter name!!";
+                parentList.appendChild(newEmptyMsg);
+            }
+        }
+
+        function editChapter(currElement) {
+            if (currElement.textContent === "Done") {
+                currElement.textContent = "Edit";
+                let currInput = currElement.previousElementSibling;
+                let currChapterName = currInput.value;
+
+                let currHeading = document.createElement("h3");
+                currHeading.className = "flex-grow-1";
+                currHeading.textContent = currChapterName;
+
+                currElement.parentElement.replaceChild(currHeading, currInput);
+            } else {
+                currElement.textContent = "Done";
+                let currHeading = currElement.previousElementSibling;
+                let currChapterName = currHeading.textContent;
+
+                let currInput = document.createElement("input");
+                currInput.type = "text";
+                currInput.placeholder = "Chapter Name";
+                currInput.className = "form-control";
+                currInput.value = currChapterName;
+
+                currElement.parentElement.replaceChild(currInput, currHeading);
+            }
+        }
+    </script>
+</body>
+</html>
